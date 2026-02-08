@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #020617; /* Default to nearly black (Slate 950) */
+  }
+  
+  /* Aggressive overrides for light text classes if they are still present */
+  .text-gray-400, .text-slate-400 {
+      color: #475569 !important; /* Force Gray 400 to be Slate 600 */
+  }
+  
+  .text-gray-500, .text-slate-500 {
+      color: #334155 !important; /* Force Gray 500 to be Slate 700 */
+  }
+  
+  .text-gray-600, .text-slate-600 {
+      color: #1e293b !important; /* Force Gray 600 to be Slate 800 */
+  }
+  
+  /* Ensure inputs are readable */
+  input, select, textarea {
+      color: #020617;
+  }
+  
+  /* Placeholder contrast improvement */
+  ::placeholder {
+      color: #64748b !important; /* Slate 500 - readable but distinct */
+      opacity: 1;
+  }
+/* Custom thin premium scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e2e8f0; /* slate-200 */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1; /* slate-300 */
+}
+
+/* For Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
+}
