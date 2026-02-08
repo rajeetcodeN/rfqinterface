@@ -1,8 +1,8 @@
 
 import { RFQData, LineItem, MaterialType } from '../types';
 
-// Live Render Backend
-const API_BASE_URL = 'https://apirfq.onrender.com';
+// Live Render Backend (Proxied)
+const API_BASE_URL = import.meta.env.VITE_PYTHON_API_URL || '/api/python';
 // For local testing use: 'http://localhost:8000';
 
 export interface PythonBackendResponse {

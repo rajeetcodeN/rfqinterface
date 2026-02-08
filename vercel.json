@@ -1,0 +1,12 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/python/:path*",
+            "destination": "https://apirfq.onrender.com/:path*"
+        },
+        {
+            "source": "/api/cost/:path*",
+            "destination": "https://cost-calapi.onrender.com/:path*"
+        }
+    ]
+}
