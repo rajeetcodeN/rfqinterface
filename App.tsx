@@ -37,7 +37,7 @@ const MOCK_ATTACHMENTS: Attachment[] = [
 const App: React.FC = () => {
   // Navigation State
   const [viewMode, setViewMode] = useState<ViewMode>('editor');
-  const [editorMode, setEditorMode] = useState<EditorMode>('verify');
+  const [editorMode, setEditorMode] = useState<EditorMode>('upload');
   const [activeTab, setActiveTab] = useState<'items' | 'collaboration' | 'documents'>('items');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
