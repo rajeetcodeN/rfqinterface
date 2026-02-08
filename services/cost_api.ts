@@ -15,15 +15,22 @@ export interface CostApiResponseItem {
     status: string;
     custom_id: string; // Matches 'pos'
     match_type?: string;
+    base_key?: { // New rich object
+        id: string;
+        description: string;
+        specs: string[];
+    };
     breakdown?: {
-        base_key_id?: string;
+        base_key_id?: string; // Kept for backward compat if needed, but primary is base_key.id
         base_unit_cost?: number;
         modules_cost?: number;
         setup_cost?: number;
         total_unit_cost: number;
         total_cost: number;
+        total_order_cost?: number; // Included in breakdown
         currency: string;
     };
+    applied_modules?: string[]; // New field from API
     explanation?: string;
 }
 
@@ -166,13 +173,16 @@ export const applyCostResults = (items: LineItem[], apiResponse: CostApiResponse
                 ...item.calculation, // Keep existing calc props (volume/density) if valid
                 materialCost: result.breakdown.base_unit_cost || 0,
                 unitPrice: result.breakdown.total_unit_cost,
-                totalLineCost: result.breakdown.total_cost,
+                ratePer100: result.breakdown.total_cost,
+                totalLineCost: result.breakdown.total_order_cost || result.breakdown.total_cost, // Corrected access path
 
                 // New Breakdown fields from User PDF/Doc spec
-                baseMaterialId: result.breakdown.base_key_id,
+                baseMaterialId: result.base_key?.id || result.breakdown.base_key_id,
+                baseKeyDescription: result.base_key?.description, // Map description
                 baseUnitCost: result.breakdown.base_unit_cost,
                 modulesCost: result.breakdown.modules_cost,
                 setupCost: result.breakdown.setup_cost,
+                appliedModules: result.applied_modules || [], // Map applied_modules
 
                 // Preserve physics calcs
                 volumeMm3: item.calculation?.volumeMm3 || 0,

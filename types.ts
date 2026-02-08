@@ -31,12 +31,15 @@ export interface CalculationResult {
   weightGrams: number;
   materialCost: number;
   unitPrice: number;
+  ratePer100?: number; // New field for "Total Cost" from API (65.09)
   totalLineCost: number;
   // Breakdown fields from API
   baseMaterialId?: string;
+  baseKeyDescription?: string; // New field for Base Key Description
   baseUnitCost?: number;
   modulesCost?: number;
   setupCost?: number;
+  appliedModules?: string[]; // New field for "B1", "R39" etc.
   explanation?: string; // Formatted text from API
 }
 

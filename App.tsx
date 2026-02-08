@@ -36,8 +36,8 @@ const MOCK_ATTACHMENTS: Attachment[] = [
 
 const App: React.FC = () => {
   // Navigation State
-  const [viewMode, setViewMode] = useState<ViewMode>('dashboard');
-  const [editorMode, setEditorMode] = useState<EditorMode>('upload');
+  const [viewMode, setViewMode] = useState<ViewMode>('editor');
+  const [editorMode, setEditorMode] = useState<EditorMode>('verify');
   const [activeTab, setActiveTab] = useState<'items' | 'collaboration' | 'documents'>('items');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -63,6 +63,7 @@ const App: React.FC = () => {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [splitView, setSplitView] = useState(true);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [showExplanations, setShowExplanations] = useState(false);
   const [explanationPopover, setExplanationPopover] = useState<{ id: string, text: string, x: number, y: number } | null>(null);
 
   // Calculate total
@@ -462,6 +463,15 @@ const App: React.FC = () => {
                       <LayoutDashboard className="w-3.5 h-3.5" />
                       {splitView ? 'Full Table' : 'Split View'}
                     </button>
+
+                    {/* Logic Toggle */}
+                    <button
+                      onClick={() => setShowExplanations(!showExplanations)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${showExplanations ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                    >
+                      <Shield className="w-3.5 h-3.5" />
+                      {showExplanations ? 'Hide Explanation' : 'Show Explanation'}
+                    </button>
                   </div>
                 )}
 
@@ -713,40 +723,44 @@ const App: React.FC = () => {
                         <table className="w-full text-left border-collapse text-[13px]">
                           <thead className="bg-slate-50 border-b border-slate-200 sticky top-0 z-10">
                             <tr>
-                              <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Line Item</th>
-                              <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Specs</th>
-                              <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Cost Breakdown (EUR)</th>
-                              <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Order Total</th>
+                              <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-12">Pos</th>
+                              <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[35%]">Input Data (Specs)</th>
+                              <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Base Info</th>
+                              <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Modules & Setup</th>
+                              {showExplanations && (
+                                <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-64 bg-indigo-50/50">Calculation Explanation</th>
+                              )}
+                              <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Totals (EUR)</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-100">
-                            {rfqData.lineItems.map(item => (
+                            {rfqData.lineItems.map((item, idx) => (
                               <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                                <td className="py-4 px-4 align-top text-xs font-mono text-slate-500">
+                                  {(idx + 1).toString().padStart(3, '0')}
+                                </td>
                                 <td className="py-4 px-4 align-top">
                                   <div className="font-bold text-slate-900">{item.description}</div>
-                                  <div className="flex items-center gap-2 mt-1">
+                                  <div className="flex flex-wrap items-center gap-2 mt-1.5">
                                     <span className="text-[10px] font-bold bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">{item.material}</span>
-                                    <span className="text-[10px] italic text-slate-400">Qty: {item.quantity} {item.unit}</span>
+                                    <span className="text-[10px] italic text-slate-400">Qty: {item.quantity}</span>
+                                    {item.dimensions && (
+                                      <span className="text-[10px] text-slate-500 font-mono ml-2 border-l border-slate-200 pl-2">
+                                        {item.dimensions.width}x{item.dimensions.height}x{item.dimensions.length}
+                                      </span>
+                                    )}
                                   </div>
-                                  {item.calculation.baseMaterialId && (
-                                    <div className="text-[10px] text-blue-600 font-bold mt-1.5">BASE: {item.calculation.baseMaterialId}</div>
-                                  )}
-                                </td>
 
-                                <td className="py-4 px-4 align-top">
-                                  <div className="space-y-1.5">
+                                  {/* Merged Specs Section */}
+                                  <div className="mt-2 space-y-1">
                                     {item.config?.standard && (
                                       <div className="flex items-center gap-2">
-                                        <span className="text-[10px] text-slate-400 font-bold uppercase">Std:</span>
+                                        <span className="text-[10px] text-slate-400 font-bold uppercase w-8">Std:</span>
                                         <span className="text-[11px] font-bold text-slate-700">{item.config.standard} / {item.config.form}</span>
                                       </div>
                                     )}
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-[10px] text-slate-400 font-bold uppercase">Dims:</span>
-                                      <span className="text-[11px] text-slate-600">{item.dimensions.length}x{item.dimensions.width}x{item.dimensions.height}</span>
-                                    </div>
                                     {item.config?.features && item.config.features.length > 0 && (
-                                      <div className="flex flex-wrap gap-1 mt-1">
+                                      <div className="flex flex-wrap gap-1">
                                         {item.config.features.map((f, i) => (
                                           <span key={i} className="text-[9px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full border border-blue-100">
                                             {f.feature_type}:{f.spec}
@@ -757,38 +771,88 @@ const App: React.FC = () => {
                                   </div>
                                 </td>
 
+                                {/* Base Info Column */}
                                 <td className="py-4 px-4 align-top">
-                                  <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                                    <span className="text-[10px] text-slate-400">Base Unit:</span>
-                                    <span className="text-[11px] font-mono text-slate-700 text-right">€{item.calculation.baseUnitCost?.toFixed(2) || '0.00'}</span>
-
-                                    <span className="text-[10px] text-slate-400">Modules:</span>
-                                    <span className="text-[11px] font-mono text-slate-700 text-right">€{item.calculation.modulesCost?.toFixed(2) || '0.00'}</span>
-
-                                    <span className="text-[10px] text-slate-400">Setup:</span>
-                                    <span className="text-[11px] font-mono text-slate-700 text-right">€{item.calculation.setupCost?.toFixed(2) || '0.00'}</span>
-
-                                    <div className="col-span-2 h-px bg-slate-100 my-0.5" />
-
-                                    <span className="text-[10px] font-bold text-slate-900">Total Unit:</span>
-                                    <span className="text-[11px] font-bold text-slate-900 text-right">€{item.calculation.unitPrice.toFixed(2)}</span>
+                                  <div className="flex flex-col gap-1.5">
+                                    <div className="flex items-center justify-between gap-4">
+                                      <span className="text-[10px] text-slate-400 uppercase">Base Price:</span>
+                                      <span className="text-[11px] font-mono text-slate-700">€{item.calculation.baseUnitCost?.toFixed(2) || '0.00'}</span>
+                                    </div>
+                                    {item.calculation.baseMaterialId && (
+                                      <div className="bg-blue-50 p-2 rounded border border-blue-100">
+                                        <div className="text-[10px] font-bold text-blue-700 font-mono break-all mb-1">
+                                          {item.calculation.baseMaterialId}
+                                        </div>
+                                        {item.calculation.baseKeyDescription && (
+                                          <div className="text-[9px] text-blue-600 leading-tight">
+                                            {item.calculation.baseKeyDescription}
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
                                   </div>
                                 </td>
 
-                                <td className="py-4 px-4 align-top text-right">
-                                  <div className="text-sm font-bold text-blue-600">€{item.calculation.totalLineCost.toFixed(2)}</div>
-                                  <div className="text-[9px] text-slate-400 mt-1 uppercase tracking-wider font-bold">Incl. Setup</div>
+                                {/* Modules & Setup Column */}
+                                <td className="py-4 px-4 align-top">
+                                  <div className="flex flex-col gap-2">
 
-                                  {item.calculation.explanation && (
+                                    {/* Applied Modules List */}
+                                    {item.calculation.appliedModules && item.calculation.appliedModules.length > 0 && (
+                                      <div className="flex flex-wrap gap-1 mb-1">
+                                        {item.calculation.appliedModules.map(m => (
+                                          <span key={m} className="text-[9px] px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded border border-amber-100 font-bold">
+                                            {m}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    )}
+
+                                    <div className="flex items-center justify-between gap-4">
+                                      <span className="text-[10px] text-slate-400 uppercase">Manufacturing:</span>
+                                      <span className="text-[11px] font-mono text-slate-700">€{item.calculation.modulesCost?.toFixed(2) || '0.00'}</span>
+                                    </div>
+
+                                    <div className="w-full h-px bg-slate-100 my-0.5" />
+
+                                    <div className="flex items-center justify-between gap-4">
+                                      <span className="text-[10px] text-slate-400 uppercase">Setup:</span>
+                                      <span className="text-[11px] font-mono text-slate-700">€{item.calculation.setupCost?.toFixed(2) || '0.00'}</span>
+                                    </div>
+                                  </div>
+                                </td>
+
+                                {showExplanations && (
+                                  <td className="py-4 px-4 align-top bg-indigo-50/10 border-l border-indigo-100">
+                                    <div className="text-[10px] text-slate-600 font-mono leading-relaxed whitespace-pre-wrap">
+                                      {item.calculation.explanation || 'No explicit explanation available.'}
+                                    </div>
+                                  </td>
+                                )}
+
+                                <td className="py-4 px-4 align-top text-right">
+                                  <div className="flex flex-col items-end gap-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Total:</span>
+                                      <span className="text-sm font-bold text-blue-600">€{item.calculation.totalLineCost.toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-[9px] text-slate-400 uppercase tracking-wider">Rate/100:</span>
+                                      <span className="text-xs font-mono text-slate-500">€{item.calculation.ratePer100?.toFixed(2) || item.calculation.unitPrice.toFixed(2)}</span>
+                                    </div>
+                                  </div>
+
+                                  {!showExplanations && item.calculation.explanation && (
                                     <button
                                       onClick={(e) => {
                                         const rect = e.currentTarget.getBoundingClientRect();
                                         setExplanationPopover({ id: item.id, text: item.calculation.explanation!, x: rect.left, y: rect.bottom + 10 });
+
                                       }}
                                       className="mt-2 text-[10px] flex items-center gap-1 text-slate-400 hover:text-blue-600 font-medium transition-colors ml-auto"
                                     >
                                       <span className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-blue-50">Is</span>
-                                      Logic
+                                      Details
                                     </button>
                                   )}
                                 </td>
@@ -797,7 +861,7 @@ const App: React.FC = () => {
                           </tbody>
                           <tfoot className="bg-slate-50 border-t border-slate-200">
                             <tr>
-                              <td colSpan={3} className="py-4 px-4 text-right font-bold text-slate-500 uppercase tracking-wider text-[10px]">Batch Total</td>
+                              <td colSpan={4} className="py-4 px-4 text-right font-bold text-slate-500 uppercase tracking-wider text-[10px]">Batch Total</td>
                               <td className="py-4 px-4 text-right font-bold text-emerald-600 text-lg">€{totalCost.toFixed(2)}</td>
                             </tr>
                           </tfoot>
