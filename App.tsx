@@ -3,7 +3,7 @@ import {
   Upload, FileText, ArrowLeft,
   LayoutDashboard, Calculator,
   ChevronLeft, ScrollText, CheckCircle, Keyboard, ChevronRight, X,
-  LogOut, Shield
+  LogOut, Shield, Download
 } from 'lucide-react';
 import { runExtractionPipeline } from './services/pipeline/extraction';
 import { calculateCostsWithApi, applyCostResults } from './services/cost_api';
@@ -375,12 +375,12 @@ const App: React.FC = () => {
         </button>
 
         <div className="h-24 flex items-center px-6 relative z-10 overflow-hidden">
-          <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 ring-1 ring-black/5 shrink-0 mr-3">
-            <Calculator className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 ring-1 ring-black/5 shrink-0 mr-3 overflow-hidden">
+            <img src="/nosta_logo.png" alt="NOSTA Logo" className="w-full h-full object-contain" />
           </div>
           <div className={`transition-all duration-100 ${isSidebarCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'} overflow-hidden whitespace-nowrap`}>
-            <span className="font-bold text-black text-lg tracking-tight block">RFQ</span>
-            <span className="text-[10px] text-black font-bold tracking-wider uppercase">Intelligence</span>
+            <span className="font-bold text-black text-lg tracking-tight block">NOSTA</span>
+            <span className="text-[10px] text-black font-bold tracking-wider uppercase">Cost Calculation</span>
           </div>
         </div>
 
@@ -687,7 +687,7 @@ const App: React.FC = () => {
 
 
                       <button
-                        onClick={handleAddManualItem}
+                        onClick={() => window.open('https://cost-calapi.onrender.com/static/parallel_key_batch.html', '_blank')}
                         className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 font-medium transition-colors text-sm"
                       >
                         <Keyboard className="w-4 h-4" /> Or input raw text manually <ChevronRight className="w-3 h-3" />
@@ -707,12 +707,29 @@ const App: React.FC = () => {
                           Document Preview
                         </span>
                       </div>
-                      <iframe
-                        src={fileUrl}
-                        className="flex-1 w-full border-none"
-                        style={{ border: 'none' }}
-                        title="RFQ Document"
-                      />
+                      {file && (file.type === 'application/pdf' || file.type.startsWith('image/') || file.type === 'text/plain') ? (
+                        <iframe
+                          src={fileUrl}
+                          className="flex-1 w-full border-none"
+                          style={{ border: 'none' }}
+                          title="RFQ Document"
+                        />
+                      ) : (
+                        <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 text-slate-400 p-8 text-center border-t border-slate-100">
+                          <FileText className="w-16 h-16 mb-4 opacity-20" />
+                          <p className="text-sm font-medium text-slate-500 mb-1">Preview not available</p>
+                          <p className="text-xs text-slate-400 mb-6 max-w-xs">
+                            This file type ({file?.name.split('.').pop()?.toUpperCase()}) cannot be previewed directly in the browser.
+                          </p>
+                          <a
+                            href={fileUrl}
+                            download={file?.name}
+                            className="px-4 py-2 bg-white border border-slate-200 shadow-sm rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors flex items-center gap-2"
+                          >
+                            <Download className="w-4 h-4" /> Download File
+                          </a>
+                        </div>
+                      )}
                     </div>
                   )}
 

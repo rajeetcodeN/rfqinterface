@@ -1,5 +1,5 @@
 {
-  "name": "DBT AI Cost Estimation",
+  "name": "NOSTA Cost Estimation",
   "description": "Enterprise-grade RFQ ingestion and cost estimation system with AI-powered document extraction and deterministic calculation auditing.",
   "requestFramePermissions": []
 }
