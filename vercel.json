@@ -2,7 +2,7 @@
     "rewrites": [
         {
             "source": "/api/python/:path*",
-            "destination": "https://apirfq.onrender.com/:path*"
+            "destination": "https://ocrapi-tp33.onrender.com/:path*"
         },
         {
             "source": "/api/cost/:path*",

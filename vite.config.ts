@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       proxy: {
         '/api/python': {
-          target: 'https://apirfq.onrender.com',
+          target: 'https://ocrapi-tp33.onrender.com',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api\/python/, '')
         },

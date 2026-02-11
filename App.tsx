@@ -3,7 +3,7 @@ import {
   Upload, FileText, ArrowLeft,
   LayoutDashboard, Calculator,
   ChevronLeft, ScrollText, CheckCircle, Keyboard, ChevronRight, X,
-  LogOut, Shield, Download
+  LogOut, Shield, Download, Search
 } from 'lucide-react';
 import { runExtractionPipeline } from './services/pipeline/extraction';
 import { calculateCostsWithApi, applyCostResults } from './services/cost_api';
@@ -686,12 +686,23 @@ const App: React.FC = () => {
                       </div>
 
 
-                      <button
-                        onClick={() => window.open('https://cost-calapi.onrender.com/static/parallel_key_batch.html', '_blank')}
-                        className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 font-medium transition-colors text-sm"
-                      >
-                        <Keyboard className="w-4 h-4" /> Or input raw text manually <ChevronRight className="w-3 h-3" />
-                      </button>
+                      <div className="flex flex-col items-center gap-3">
+                        <button
+                          onClick={() => window.open('https://cost-calapi.onrender.com/static/parallel_key_batch.html', '_blank')}
+                          className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 font-medium transition-colors text-sm"
+                        >
+                          <Keyboard className="w-4 h-4" /> Or input raw text manually <ChevronRight className="w-3 h-3" />
+                        </button>
+
+                        <button
+                          onClick={() => window.open('https://cost-calapi.onrender.com/search', '_blank')}
+                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 text-slate-500 hover:text-blue-600 hover:bg-blue-50 border border-slate-200 rounded-lg transition-all text-[11px] font-bold uppercase tracking-wider group"
+                        >
+                          <Search className="w-3.5 h-3.5 transition-transform group-hover:scale-110" />
+                          Base Key Searcher
+                          <ChevronRight className="w-3 h-3 opacity-50 group-hover:translate-x-0.5 transition-transform" />
+                        </button>
+                      </div>
 
                     </div>
                   </div>

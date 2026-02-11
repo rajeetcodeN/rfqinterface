@@ -29,7 +29,7 @@ graph TD
 
 ### 1. Frontend (React + Vite)
 - **Role**: User Interface for uploading documents and verifying quotes.
-- **Action**: When a user uploads a file, the `extraction.ts` pipeline sends the file to the Python Backend (`https://apirfq.onrender.com/process`).
+- **Action**: When a user uploads a file, the `extraction.ts` pipeline sends the file to the Python Backend (`https://ocrapi-tp33.onrender.com/process`).
 - **State**: No longer performs heavy PDF parsing or OCR locally.
 
 ### 2. Python Backend (FastAPI)
